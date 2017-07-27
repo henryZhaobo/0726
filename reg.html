@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="Tools2.js"></script>
+    <style>
+        .pic{
+            display: none;
+        }
+        .preview{
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+<div class="feedback"></div>
+<input type="text" class="username" placeholder="用户名"><br>
+<input type="password" class="pwd" placeholder="密码由小写大写字母特殊字符组成"><br>
+<input type="password" class="repwd" placeholder="确认密码"><br>
+<input type="email" class="email" placeholder="email"><br>
+<input type="file" class="pic" id="pic">
+<label for="pic">上传头像</label><br>
+<img src="default.png" class="preview"><br>
+<button class="regBtn">注册</button>
+<script>
+    var feedback=document.querySelector(".feedback");
+    var fd=new FormData();
+    var xhr=new XMLHttpRequest();
+    var regBtn=document.querySelector(".regBtn");
+    var username=document.querySelector(".username");
+    var pwd=document.querySelector(".pwd");
+    var repwd=document.querySelector(".repwd");
+    var email=document.querySelector(".email");
+    var pic=document.querySelector(".pic");
+    var preview=document.querySelector(".preview");
+    var fr=new FileReader();
+    /////上传图片预览///
+   pic.addEventListener("change",function(){
+       if(!/image\//.test(this.files[0].type)){
+           feedback.innerHTML="只能上传图片";
+           return false;
+       }else {
+           feedback.innerHTML="成功";
+       }
+        fr.readAsDataURL(this.files[0]);
+        fr.addEventListener("load",function(){
+           preview.src=this.result;
+       })
+    })
+//    确认密码禁止粘贴 paste
+    repwd.addEventListener("paste",function(evt){
+        evt.preventDefault();
+        feedback.innerHTML="密码禁止粘贴";
+    })
+//    用户名失去焦点
+    username.addEventListener("blur",function(){
+        xhr.open("post","reg.php");
+        fd.append("username",username.value);
+        fd.append("action","checkUsername");
+        xhr.send(fd);
+        xhr.addEventListener("readystatechange",function(){
+            if (xhr.readyState==4){
+                if (xhr.status==200){
+                    if (trim(username.value).length==0){
+                        feedback.innerHTML="用户名不能为空";
+                        return false;
+                    }
+                   if (xhr.responseText=="taken"){
+                       feedback.innerHTML="用户名已存在!!!!!";
+                   }else {
+                       feedback.innerHTML="用户名可以使用";
+                   }
+                }
+            }
+        })
+    })
+    repwd.addEventListener("blur",function(){
+        if(trim(pwd.value)!=trim(repwd.value)){
+            feedback.innerHTML="俩次密码不一致";
+            return false;
+        }
+        feedback.innerHTML="";
+    });
+    pwd.addEventListener("keyup",function(){
+        switch(validate_pwd(trim(pwd.value))){
+            case 0 :feedback.innerHTML="非常强";break;
+            case 1 :feedback.innerHTML="较高";break;
+            case 2 :feedback.innerHTML="中";break;
+            case 3 :feedback.innerHTML="低";break
+        }
+    })
+    email.addEventListener("keyup",function(){
+        if(validate_email(email.value)){
+            feedback.innerHTML="邮箱格式正确";
+        }else {
+            feedback.innerHTML="邮箱格式NO正确";
+            return false
+        }
+    })
+          /*点击注册验证*/
+    regBtn.addEventListener("click",function(){
+        /*用户名不能为空验证*/
+        if (trim(username.value).length==0){
+            feedback.innerHTML="用户名不能为空";
+            return false;
+        }
+        /*验证密码*/
+        if(validate_pwd(pwd.value)){
+            feedback.innerHTML="密码强度不够";
+            return false;
+        }
+
+//        邮箱验证
+        if(!validate_email(email.value)){
+            feedback.innerHTML="邮箱格式错误";
+            return false;
+        }
+
+
+        xhr.open("post","reg.php");
+        fd.append("username",username.value);
+        fd.append("pwd",pwd.value);
+        fd.append("email",email.value);
+        fd.append("pic",pic.files[0]);
+        fd.append("action","reg");
+        xhr.send(fd);
+        xhr.addEventListener("readystatechange",function(){
+            if (xhr.readyState==4){
+                if (xhr.status==200){
+                    if (xhr.responseText=="ok"){
+                        feedback.innerHTML="注册成功";
+                    }else if (xhr.responseText=="failed"){
+                        feedback.innerHTML="注册失败";
+                    }else if(xhr.responseText=="taken"){
+                        feedback.innerHTML="用户名已存在"
+                    }else {
+                        console.log(xhr.responseText);
+                    }
+                }
+            }
+        })
+    })
+
+
+</script>
+</body>
+</html>

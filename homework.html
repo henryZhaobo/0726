@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        *{
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .div{
+            width: 500px;
+            height: 200px;
+            border: 1px solid black;
+        }
+        .tab1 ,.tab2,.tab3{
+           width: 70px;
+            height: 30px;
+            display: inline-block;
+            margin: 0 10px;
+            border: 1px solid #00a0e9;
+            text-align: center;
+            transition:width 2s;
+        }
+        .tdiv1,.tdiv2,.tdiv3{
+            width: 500px;
+            height: 150px;
+            border: 1px solid #CCCCCC;
+            display: none;
+        }
+
+    </style>
+    <script src="jquery-3.2.1.min.js"></script>
+</head>
+<body>
+<div class="div">
+    <ul class="ul">
+        <li class="tab1" onclick="tab(1)">tab1</li>
+        <li class="tab2" onclick="tab(2)">tab2</li>
+        <li class="tab3" onclick="tab(3)">tab3</li>
+    </ul>
+    <div class="tdiv1">第一页</div>
+    <div class="tdiv2">第二页</div>
+    <div class="tdiv3">第三页</div>
+</div>
+<script>
+    var tab1=document.querySelector(".tab1");
+    var tab2=document.querySelector(".tab2");
+    var tab3=document.querySelector(".tab3");
+    var tdiv1=document.querySelector(".tdiv1");
+    var tdiv2=document.querySelector(".tdiv2");
+    var tdiv3=document.querySelector(".tdiv3");
+    var arr=[tab1,tab2,tab3];
+    var arrT=[tdiv1,tdiv2,tdiv3]
+   function tab(i){
+
+       for (var j=0;j<3;j++){
+           arrT[j].style.display="none";
+           arr[j].style.backgroundColor="white";
+           arr[j].style.width="50px";
+       }
+       arr[i-1].style.backgroundColor="#00a0e9";
+       arr[i-1].style.width="130px";
+       arrT[i-1].style.display="block";
+   }
+</script>
+
+</body>
+</html>

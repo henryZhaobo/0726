@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="css/font-awesome.css" rel="stylesheet">
+    <style>
+        .demo{
+            border: 1px solid green;
+            width: 250px;
+        }
+        .loading{
+            border: 1px solid red;
+            width: 50px;
+            height: 50px;
+            font-size: 50px;
+            color: red;
+        }
+    </style>
+
+</head>
+<body>
+<div class="demo"></div>
+
+</body>
+<script>
+    var demo=document.querySelector(".demo");
+    var xhr=new XMLHttpRequest();
+    console.log(xhr.readyState);//int 5种状态 0未连接
+    //连接后台程序
+    xhr.open("post","data.php");
+    demo.innerHTML="<i class='fa fa-spin fa-spinner loading'></i>";
+    console.log(xhr.readyState);
+    //        console.log(xhr);
+    xhr.send(null);
+    console.log(xhr.readyState);
+    //绑定事件;状态改变事件
+    xhr.addEventListener("readystatechange",function(){
+        if (xhr.readyState==4){
+            if (xhr.status==200){
+                demo.innerHTML=xhr.responseText;
+                //获取后台返回的值，类型是字符串
+              /*  console.log(xhr.responseText)
+                console.log(typeof xhr.responseText)*/
+            }
+        }
+    })
+</script>
+</html>

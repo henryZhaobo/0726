@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="css/font-awesome.css" rel="stylesheet">
+    <style>
+       /* .demo{
+            border: 1px solid green;
+            width: 250px;
+        }*/
+        .loading{
+            border: 1px solid red;
+            width: 50px;
+            height: 50px;
+            font-size: 50px;
+            color: red;
+        }
+    </style>
+
+</head>
+<body>
+<div class="demo"></div>
+<div class="member">
+    <ul>
+        <li class="membername"></li>
+        <li class="logout">注销</li>
+    </ul>
+</div>
+<div class="login">
+    <input type="text" class="username"><br>
+    <input type="password" class="pwd"><br>
+    <button class="btn">按钮</button>
+</div>
+
+
+
+</body>
+<script>
+    /*用ajax 用post方式提交数据*/
+    var demo=document.querySelector(".demo");
+    var xhr=new XMLHttpRequest();
+    var username=document.querySelector(".username");
+    var pwd=document.querySelector(".pwd");
+    var btn=document.querySelector(".btn");
+    var memmbername=document.querySelector(".membername");
+    var member=document.querySelector(".member");
+    var login=document.querySelector(".login");
+    var logout=document.querySelector(".logout");
+    ////判断sessuinStorage中是否有值；
+    if(sessionStorage.getItem("username")){
+        memmbername.innerHTML=sessionStorage.getItem("username");
+        member.style.display="block";
+        login.style.display="none";
+    }else {
+        member.style.display="none";
+        login.style.display="block";
+    }
+    logout.addEventListener("click",function(){
+        username.value="";
+        pwd.value="";
+        sessionStorage.removeItem("username");
+        //会员消息界面消失
+        login.style.display="block";
+        member.style.display="none";
+    });
+    btn.addEventListener("click",function(){
+        xhr.open("post","data.php");
+        demo.innerHTML="玩命加载中...";
+        //ajax是以表单的数据传递方式传值；
+        xhr.setRequestHeader("content-Type","application/x-www-form-urlencoded");
+        xhr.send("username="+username.value+"&pwd="+pwd.value);
+        xhr.addEventListener("readystatechange",function(){
+            if (xhr.readyState==4){
+                if (xhr.status==200){
+//                    demo.innerHTML=xhr.responseText;
+                    if(xhr.responseText=="ok"){
+                        demo.innerHTML="";
+                        memmbername.innerHTML=username.value+"登录成功";
+                        sessionStorage.setItem("username",username.value);
+                        member.style.display="block";
+                        login.style.display="none";
+                    }else if(xhr.responseText=="failed"){
+                        demo.innerHTML="用户名或密码错误";
+                    }else {
+                        console.log(xhr.responseText);
+                    }
+                }
+            }
+        })
+    })
+   /* console.log(xhr.readyState);//int 5种状态 0未连接
+    //连接后台程序
+    xhr.open("get","data.php?username=peter&pwd=123");
+    demo.innerHTML="<i class='fa fa-spin fa-spinner loading'></i>";
+    console.log(xhr.readyState);
+    //        console.log(xhr);
+    xhr.send(null);
+    console.log(xhr.readyState);
+    //绑定事件;状态改变事件
+    xhr.addEventListener("readystatechange",function(){
+        if (xhr.readyState==4){
+            if (xhr.status==200){
+                demo.innerHTML=xhr.responseText;
+                //获取后台返回的值，类型是字符串
+              /!*  console.log(xhr.responseText)
+                console.log(typeof xhr.responseText)*!/
+            }
+        }
+    })*/
+</script>
+</html>
